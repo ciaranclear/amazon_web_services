@@ -405,3 +405,165 @@ EFS Infrequent Access (EFS-IA).
   * The name Lustre is derived from Linux and Cluster.
   * Machine learning and video processing.
   * Scales up to 100s of GBs.
+
+  ## 7 ELB and ASG Elastic Load Balancing
+
+  * Scalability is the ability to accomodate a larger load by making the hardware stronger (scale up)
+    or by adding nodes (scale out).
+  * Elasticity once a system is scalable, elasticity means that there will be some auto scaling so 
+    that the system can scale based on the load. This cloud friendly pay per use match demand, 
+    optomize costs.
+  * Agility means new IT resources are only a click away which means that you reduce the time to make
+    those resources available from weeks to just minutes.
+
+Elastic Load Balancers.
+* An ELB (Elastic Load Balancers) is a managed load balancer.
+  * AWS guaruntees that it will be working.
+  * AWS takes care of upgrades, maintenance, high availability.
+  * AWS provides only a few configurations knobs.
+* It costs less to setup your own load balancer but it will be a lot more effort.
+* 4 kinds of load balancers offered by AWS.
+  * ALB Application Load Balancer (HTTP/HTTPS) Layer 7.
+  * NLB Network Load Balancer (ultra high performance for TCP/UDP) Layer 4.
+  * GLB Gateway Load Balancer Layer 3. Route traffic to firewalls that you manage on EC2 instances. 
+    Intrusion detection.
+  * Classic Load Balancer (retired 2023) Layer 4 and 7.
+
+Create Load Balancers.
+* Create a number of EC2 instances to be balanced.
+* Go to Load Balancers in the left hand toolbar.
+* Select Create load Balancer.
+* Selct the type of load balancer you want.
+* Configure the load balancer.
+* Choose the Network Mapping zones for the balancer.
+* Assign or create a Security Group for the load balancer.
+* Configure Listeners and Routing to target group ie a group of instances to load balance accross.
+* Create the Load Balancer.
+* Use the dfault DNS name to access the load balancer.
+
+Auto Scaling Group.
+* The goal of ASG Auto Scaling Group is to.
+  * Scale out (add EC2 instances) to match a decreased load.
+  * Scale in (remove EC2 instances) to match a decreased load.
+  * Ensure there is a minimum or maximum number of machines running.
+  * Automatically register new instances to a load balancer.
+  * Replace an unhealthy instance.
+* Cost savings. Only run optimal capacity.
+
+Create an Auto Scaling Group.
+* Select Auto Scaling Group in left hand toolbar.
+* Select Create Launch Template. This is a template that is used to launch new EC2 instances.
+  Is similar to setting up instances. Select the security groups. Select the ECB volumes if applicable.
+  Add user data.
+* Select Launch Template.
+* Select the version of the template to launch.
+* Select Next.
+* Choose the availability zones.
+* Select Next.
+* Select a load balancer.
+* Select a Health Check option.
+* Select Next.
+* Select Desired, Max and Min capacity.
+* Select Next.
+* Select Auto Scaling Group.
+* You can go to Auto Scaling Groups or Load Balancers in the left hand toolbar to get further
+  information on the health of the system. You can change the health check parameters in the
+  load balancer.
+
+Auto Scaling Groups Strategies.
+* Manual Scaling.
+* Dynamic Scaling.
+  * Simple/Step Scaling.
+    * When a CloudWatch alarm is triggered (example CPU > 70%) add 2 units.
+  * Target Tracking Scaling.
+    * Example average ASG CPU to stay at 40%.
+  * Scheduled Scaling.
+    * Anticipate a scaling based on usage patterns.
+  * Predictive Scaling.
+    * Uses machine learning to predict traffic.
+
+NOTE Section Cleanup. Delete the ASG and the Load Balancer. Instances will be terminated when ASG is deleted.
+
+## AWS S3
+
+* Amazon S3 allows people to store objects (files) in buckets (directories).
+* Buckets must have a globally unique name (accross all regions and all accounts).
+* Buckets are defined at the region level.
+* S3 looks like a global service but buckets are created in a region.
+* Naming convention.
+  * No uppercase, no underscores.
+  * 3-63 characters long.
+  * Not an IP.
+  * Must atart with lowercase letter or number.
+  * Must not start with the prefix xn--.
+  * Must not end with the suffix -s3alias.
+
+Create an S3 Bucket.
+* Go to the Amazon S3 page.
+* Name the bucket with a unique name.
+* Assign an availability where the bucket will be based.
+* Select Create Bucket.
+* To upload to the bucket select the bucket and select upload. Select a file to upload.
+* You can also create folders inside the bucket.
+* You may not be able to access files using the public url without further configurations.
+
+Create a Bucket Policy.
+* In Amazon S3 Buckets go to Permissions on top toolbar.
+* untick the Block public access box.
+* Select Save Changes.
+* Scroll down to Bucket policy.
+* Select Edit.
+* You can use the policy generator to create the policy.
+* When inputting the ARN put a /* at the end to allow access to all objects inside the bucket.
+* Select Add Statement when finished.
+* Select Generate Policy. Copy the json into the Policy field.
+
+Host a Static Webpage.
+* Inside Amazon S3 Buckets select a bucket.
+* Select Properties on top toolbar.
+* Scroll down to Static website hosting.
+* Select Edit.
+* Enable hosting.
+* Specify a html document.
+* Save changes.
+* Make sure to upload a html document.
+* Go to Properties and scroll down to Static website hosting to get the url.
+
+Versioning.
+* In Amazon S3 Buckets go to Properties on top toolbar.
+* Go to Bucket Versioning and select Edit.
+* Select Enable and Save Changes.
+* To see the versions go to Objects on the Buckets page and toggle the Show versions button
+  below the top toolbar.
+* To permanently delete an object select the object(s) to delete and then select Delete in the top toolbar.
+  * You will be deleting a specific version of an object. Input permanent delete to confirm.
+  * Select Delete Objects.
+* To delete an object but not permanently turn off Show versions and select an object.
+* Select Delete in top toolbar.
+  * You will be adding a delete marker and will be prompted to input the word delete to confirm.
+  * Select Delete Objects.
+  * If you toggle on Show versions you will see that the object is still in the bucket.
+* To delete the delete marker turn on versioning and delete the delete marker which will restore the previous version.
+
+S3 Replication.
+* Create two buckets in different availability zones.
+* Ensure versioning is enabled on both buckets.
+* In Amazon S3 Buckets go to Managment in the top toolbar.
+* Scroll down to Replication rules.
+* Configure the rule.
+* Select Create new role for the IAM Role.
+* Save the rule.
+
+S3 Storage Classes.
+* Create a bucket.
+* Upload some data.
+* Go to Properties.
+* Select a Storage Class.
+* Select Upload.
+
+Create S3 Lifecycle Rules.
+* In Buckets select Managment in top toolbar.
+* Select Lifecycle rule.
+* Choose rule scope.
+* Add a transition.
+* Selct Creat Rule.
